@@ -6,7 +6,7 @@ exports.location_get_all = (req, res, next) => {
     //Product.find().where -> more conditions
     //Product.find().limit,
     LocationDB.find() //find all
-        .select('name text address _id')//define which fields we want to pass
+        .select('name text address latitude longitude altitude _id')//define which fields we want to pass
         //.populate() : 특정 key와 연결된 db가 있을경우(relation으로 존재하는 key), 가져와 넣는
         .exec()
         .then(locations => {
