@@ -15,7 +15,6 @@ mongoose.connect(
         useNewUrlParser : true
     }
 );
-//mongoose.connect('mongodb+srv://sundal:Tjdrp77!@sundal-rest-api-p0lhb.mongodb.net/test?retryWrites=true&w=majority')
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
