@@ -15,7 +15,6 @@ mongoose.connect(
         useNewUrlParser : true
     }
 );
-
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 //extended is for rich body, false = simple body

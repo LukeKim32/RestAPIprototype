@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/userDB');
+const LocSocketDB = require('../models/locationSocketDB');
 
 exports.signup = (req,res,next)=>{
     //check if user data exists
@@ -21,33 +22,57 @@ exports.signup = (req,res,next)=>{
                         url : "http://I-have-to-register-API-document"
                     })
                 } else {
-                    bcrypt.hash(req.body.password, 10, (err, hash) =>{
+                    bcrypt.hash(req.body.password, 10, (err, hash_password) =>{
                         if (err){
                             return res.status(401).json({
                                 error : err
                             });
                         } else {
-                            const user = new User({
-                                _id : new mongoose.Types.ObjectId(),
-                                email : req.body.email,
-                                password : hash
-                            });
-                            user.save()
-                                .then(result => {
-                                    console.log(result)
-                                    res.status(201).json({
-                                        message : 'User created',
-                                        request : {
-                                            type : 'POST',
-                                            url : process.env.URL_OF_REST + "/user/login"
-                                        }
+                            bcrypt.hash(req.body.email+process.env.LOC_SOC_HASH,10,(err,hash_locSocDB_id)=> {
+                                if (err){
+                                    return res.status(401).json({
+                                        error : err
                                     });
-                                })
-                                .catch(err => {
-                                    res.status(500).json({
-                                       error : err
-                                    })
-                                });
+                                }else{
+                                    const user = new User({
+                                        _id : new mongoose.Types.ObjectId(),
+                                        email : req.body.email,
+                                        password : hash_password,
+                                        locsoc_id : hash_locSocDB_id
+                                    });
+                                    user.save()
+                                        .then(result => {
+                                            console.log(result)
+                                            const person = new LocSocketDB({
+                                                _id: hash_locSocDB_id,
+                                                name: req.body.email,
+                                                xyz : [],
+                                                viewM : [],
+                                            });
+                                            person.save()//미리 생성해놓고 나중에 수정하는 방향...고민..
+                                                .then(result => {
+                                                    res.status(201).json({
+                                                        message : 'User created',
+                                                        request : {
+                                                            type : 'POST',
+                                                            url : process.env.URL_OF_REST + "/user/login"
+                                                        }
+                                                    });
+                                                }).catch(err => {
+                                                    res.status(500).json({
+                                                       error : err
+                                                    })
+                                                });
+                                        })
+                                        .catch(err => {
+                                            res.status(500).json({
+                                               error : err
+                                            })
+                                        });
+                                }
+                                
+                            })
+                            
                         }
                         //salt means adding random string to plain text and then hash
                         //if password is like 'icecream', can be searched mapped hash data with it
@@ -93,9 +118,11 @@ exports.login = (req,res,next)=>{
                     {
                         expiresIn : "1h"
                     });
+                    
                     //payload : data to pass
                     return res.status(200).json({
                         message : 'Auth succesful',
+                        locsoc_id : user[0].locsoc_id,
                         token : token, //token is encoded not encrypted!
                         //if user gets token data, we can check in jwt website
                         request : {

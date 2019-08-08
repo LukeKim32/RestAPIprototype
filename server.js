@@ -11,7 +11,7 @@ const options = {
 
 const rest_api_server = https.createServer(options, app);
 const io = require('socket.io')(rest_api_server);
-rest_api_server.listen(8080, '127.0.0.1', function() {
+rest_api_server.listen(8080, '0.0.0.0', function() {
   console.log('listening');
   console.log(rest_api_server.address());
 });

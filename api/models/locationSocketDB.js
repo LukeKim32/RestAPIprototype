@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 //MongoDB schema
 const locationSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+    // _id: mongoose.Schema.Types.ObjectId,
+    _id : String,
     name: String,
     xyz : [{ type : Number, required: true }],
     viewM : [{type : Number, required: true}],
-});
+},{ _id: false });
+
 //How to define : key : type of value
 
 module.exports = mongoose.model('LocationSocket',locationSchema);
