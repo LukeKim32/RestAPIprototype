@@ -1,18 +1,20 @@
 const jwt = require('jsonwebtoken');
-//req will be automatically passed without explicit parameter passing
 
-//we will verify token
+/** 토큰 확인 */
 module.exports = (req, res, next) => {
-    //decode() : only helpful after verification
-    //verify() : verify & decode
+    /** 기능
+     * decode() : only helpful after verification 
+     * verify() : verify & decode
+    */
     try{
+        // request 헤더 : {"authorization" : "Bearer 토큰값"} 형식
         const token = req.headers.authorization.split(' ')[1];
-        //token is sent by request header : "authorization" : "Bearer token"
+       
         console.log(token);
-        //req.body.token can cause error, if the req body isnt parsed
-        const decoded = jwt.verify(token, process.env.JWT_HASH);
-        //if verify() fails, it will make error
-        req.userData = decoded; //add userData
+
+        const decoded = jwt.verify(token, process.env.JWT_HASH); //if verify() fails, it will make error
+        
+        req.userData = decoded; //request의 'userData' 에 담아서 전달
         next();
     }
     catch (error) {

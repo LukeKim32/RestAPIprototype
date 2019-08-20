@@ -10,7 +10,9 @@ const userSchema = mongoose.Schema({
         match : /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
     },//match : checks if email address is valid format
     password : {type : String, required : true},
-    locsoc_id : String
+    nickname : {type : String, required : true},
+    xyz : [{ type : Number, required: true }],
+    viewM : [{type : Number, required: true}]
 });
 
 module.exports = mongoose.model('User',userSchema);

@@ -1,33 +1,35 @@
 const express = require('express');
 const router = express.Router();
-
-const checkToken = require('../middleware/checkToken');
-//Self-descriptive 함을 만족하기 위해 response를 잘 처리해주어야한다.
-
 const locationController = require('../controllers/locationController');
 
-//get all gps location stored in DB
+/** Login 성공 시 토큰 발행 */
+const checkToken = require('../middleware/checkToken');
+
+
+/** DB 내 모든 location 데이터 가져옴 */
 router.get('/',locationController.location_get_all);
-//router와 controller을 분리
 
-//.post() 와 같은 메소드의 파라미터로 넘어가는 건 순서대로 실행된다
-//중간에 넣고 싶은 메소드가 있으면 넣어준다
 
-//register a gps location in DB
-//authorization required
+/** User가 보낸 새 location 데이터 => DB에 저장 
+ * 로그인 필요 (토큰 인증)
+ * 메소드의 퍼리미터 순서대로(--->) 실행
+*/
 router.post('/',checkToken, locationController.location_register);
 
-//:productID 는 변수명, 추출가능, 쿼리스트링 같은거임
-//get information of a single specific gps location
+
+/** User가 보낸 데이터 id => DB에 해당 데이터 가져옴 */
 router.get('/:locationID',locationController.location_get_one_info);
 
-//따로 return 할 필요가 없다 뒤에 코드가 없어서, 뒤에 코드가 더 있다면 return으로 설정해주자
-//edit information of a single specific gps location
-//authorization required
+
+/** User가 보낸 수정할 데이터 & id ==> DB에 변경, 저장
+ * 로그인 필요 (토큰 인증)
+ */
 router.put('/:locationID',checkToken, locationController.location_edit_info);
 
-//delete data of a single specific gps location
-//authorization required
+
+/** User가 보낸 데이터 id ==> DB에서 삭제
+ * 로그인 필요 (토큰 인증)
+*/
 router.delete('/:locationID',checkToken, locationController.location_delete_one);
 
 module.exports=router;
